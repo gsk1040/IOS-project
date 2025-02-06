@@ -22,9 +22,6 @@
 
 </div>
 </details>
-객체지향 프로그래밍의 4가지 특징을 시각적으로 보기 좋게 구성해드리겠습니다.
-
-
 
 # 📚 객체지향 프로그래밍(OOP)의 4가지 핵심 특징
 
@@ -36,13 +33,13 @@
 - **구현 방법**:
   - private/protected 접근 제어자 사용
   - getter/setter 메서드 활용
-</details>
+  </details>
 
 <details>
 <summary><h2>2. 🔄 상속 (Inheritance)</h2></summary>
 
 - **정의**: 부모 클래스의 특성을 자식 클래스가 물려받음
-- **장점**: 
+- **장점**:
   - 코드 재사용성 향상
   - 유지보수 용이성
 - **구현 예시**:
@@ -50,7 +47,7 @@
   class Parent { }
   class Child: Parent { }
   ```
-</details>
+  </details>
 
 <details>
 <summary><h2>3. 🎭 다형성 (Polymorphism)</h2></summary>
@@ -106,10 +103,12 @@ for shape in shapes {
 ```
 
 **실행 결과**:
+
 ```
 ○ 원을 그립니다
 □ 사각형을 그립니다
 ```
+
 </details>
 
 # 🤓 진짜 왕초보의 구조체/클래스 공부 일기
@@ -121,7 +120,7 @@ for shape in shapes {
 struct Book {
     var title: String
     var author: String
-    
+
     func displayInfo() {
         print("\(title) by \(author)")
     }
@@ -129,6 +128,7 @@ struct Book {
 ```
 
 **😅 내 생각들:**
+
 - 음... `struct`가 클래스랑 다르다는데 아직 잘 모르겠다
 - `var title: String` 이런거는 변수 만드는거 같은데 왜 여기다 만들지?
 - `displayInfo()` 이건 함수 같은데... 이름 잘 지었나?
@@ -146,6 +146,7 @@ book2.title = "Advanced Swift"
 ```
 
 **🙈 이해 안 되는 부분:**
+
 - 왜 `Book(title:` 이렇게 쓰는거지? 그냥 `Book("Swift Programming")`은 안되나?
 - `let`이랑 `var` 차이가 뭐였더라... 계속 헷갈려
 - 복사된다고 하는데 이게 좋은건가...?
@@ -158,7 +159,7 @@ book2.title = "Advanced Swift"
 class Car {
     var brand: String
     var model: String
-    
+
     init(brand: String, model: String) {
         self.brand = brand
         self.model = model
@@ -167,6 +168,7 @@ class Car {
 ```
 
 **😱 헷갈리는 것들:**
+
 - 클래스는 왜 `init` 을 꼭 써야하지?
 - `self`는 뭐지...? 왜 쓰는거지?
 - 구조체는 이거 안써도 되던데 왜지?
@@ -176,17 +178,20 @@ class Car {
 <summary><h2>✨ 내가 정리해본 차이점</h2></summary>
 
 **구조체는:**
+
 - 복사가 된다 (아직도 이해 못함...)
 - `init` 안써도 된다 (편함!)
 - 상속이 안된다 (이건 나중에 공부해야지...)
 
 **클래스는:**
+
 - 복사가 안되고 참조된다 (이것도 이해 못함 😭)
 - `init` 꼭 써야함 (귀찮...)
 - 상속된다 (이것도 나중에...)
 
 **🌟 오늘의 깨달음:**
 사실 아직도 많이 헷갈리는데... 일단 작은 데이터는 구조체 쓰라고 하니까 그렇게 해야겠다!
+
 </details>
 
 <details>
@@ -198,11 +203,8 @@ class Car {
 4. 메모리 어떻게 동작하는지 찾아보기
 
 **🙏 선배님들 도와주세요:**
+
 - 실제로는 이거 어떻게 쓰는지 예제 좀 더 보고 싶어요
 - 진짜 현업에서는 뭘 더 많이 쓰나요?
 - 이거 외우고 있어야 하나요...? 😅
 </details>
-
-
-
-
