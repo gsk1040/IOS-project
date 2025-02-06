@@ -114,67 +114,6 @@ for shape in shapes {
 # 🤓 진짜 왕초보의 구조체/클래스 공부 일기
 
 <details>
-<summary><h2>📘 책 예제로 배워보는 구조체</h2></summary>
-
-```swift
-struct Book {
-    var title: String
-    var author: String
-
-    func displayInfo() {
-        print("\(title) by \(author)")
-    }
-}
-```
-
-**😅 내 생각들:**
-
-- 음... `struct`가 클래스랑 다르다는데 아직 잘 모르겠다
-- `var title: String` 이런거는 변수 만드는거 같은데 왜 여기다 만들지?
-- `displayInfo()` 이건 함수 같은데... 이름 잘 지었나?
-</details>
-
-<details>
-<summary><h2>🤔 구조체로 책 만들어보기</h2></summary>
-
-```swift
-let book1 = Book(title: "Swift Programming", author: "John Doe")
-book1.displayInfo()
-
-var book2 = book1
-book2.title = "Advanced Swift"
-```
-
-**🙈 이해 안 되는 부분:**
-
-- 왜 `Book(title:` 이렇게 쓰는거지? 그냥 `Book("Swift Programming")`은 안되나?
-- `let`이랑 `var` 차이가 뭐였더라... 계속 헷갈려
-- 복사된다고 하는데 이게 좋은건가...?
-</details>
-
-<details>
-<summary><h2>🚗 실습: 자동차로 비교해보기</h2></summary>
-
-```swift
-class Car {
-    var brand: String
-    var model: String
-
-    init(brand: String, model: String) {
-        self.brand = brand
-        self.model = model
-    }
-}
-```
-
-**😱 헷갈리는 것들:**
-
-- 클래스는 왜 `init` 을 꼭 써야하지?
-- `self`는 뭐지...? 왜 쓰는거지?
-- 구조체는 이거 안써도 되던데 왜지?
-</details>
-
-<details>
 <summary><h2>✨ 내가 정리해본 차이점</h2></summary>
 
 **구조체는:**
