@@ -8,18 +8,23 @@
 
 import Foundation
 
-class Car {
-    // 멤버 필드 선언
-    // 캡슐화
-    var color: String
-    var speed: Int
-    
-    //초기화함수 생성자
-    init(color:String, speed:Int) {
-        // 필드 매개변수
-        self.color = color
-        self.speed = speed
-    }
-    
-    // 멤버 메서드 함수 - 객체 외부에서 접근
+
+
+let sonata = Car(color: "검은색", speed: 110)
+let grandeur = Car(color: "하얀색", speed: 120)
+
+//리스트를 넣을 수 있나?
+
+let carList: [Car] = [sonata,grandeur]
+let carList2: [Car] = [Car(color: "보라색", speed: 90), Car(color: "파란색", speed: 130)]
+
+//sonata.drive()
+//grandeur.drive()
+for car in carList {
+    car.drive()
+}
+
+for (i, car) in carList2.enumerated() {
+    print(i, terminator: ": ")
+    car.drive()
 }
