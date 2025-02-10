@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/obsidian,xcode,swift,visualstudio,visualstudiocode,java,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=obsidian,xcode,swift,visualstudio,visualstudiocode,java,python
 
+###DS_Store
+.DS_Store
+
 ### Java ###
 # Compiled class file
 *.class
