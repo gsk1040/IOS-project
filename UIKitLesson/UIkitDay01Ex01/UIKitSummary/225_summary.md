@@ -1,4 +1,4 @@
-# iOS 개발 초보자를 위한 Xcode와 UIKit 학습 요약
+#  Xcode와 UIKit 학습 요약
 
 ## 1. Xcode 기본 작업 흐름
 - **Xcode 실행**: 모든 iOS 개발의 시작점 (요리사가 주방에 들어가는 것과 같음)
