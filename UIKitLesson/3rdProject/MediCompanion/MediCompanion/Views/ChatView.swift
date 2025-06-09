@@ -9,6 +9,16 @@
 // Views/ChatView.swift
 import SwiftUI
 
+extension String {
+    func attributedStringFromMarkdown() -> AttributedString {
+        do {
+            return try AttributedString(markdown: self)
+        } catch {
+            return AttributedString(self)
+        }
+    }
+}
+
 struct ChatView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel: ChatViewModel
@@ -133,7 +143,7 @@ struct MessageBubble: View {
             if message.isUser {
                 Spacer()
                 
-                Text(message.text)
+                Text(message.text.attributedStringFromMarkdown()) // 변경된 부분
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(theme.colors.primary)
@@ -141,7 +151,7 @@ struct MessageBubble: View {
                     .cornerRadius(18)
                     .cornerRadius(18, corners: [.topLeft, .topRight, .bottomLeft])
             } else {
-                Text(message.text)
+                Text(message.text.attributedStringFromMarkdown()) // 변경된 부분
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(Color.gray.opacity(0.1))

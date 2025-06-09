@@ -10,6 +10,7 @@
 import Foundation
 import SwiftUI
 
+
 class ChatViewModel: ObservableObject {
     private let alanService = AlanAPIService()
     @Published var messages: [ChatMessage] = []
