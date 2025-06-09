@@ -10,7 +10,8 @@
 # Icon must end with two \r
 Icon
 
-
+# api.key
+.GoogleService-Info.plist
 # Thumbnails
 ._*
 
