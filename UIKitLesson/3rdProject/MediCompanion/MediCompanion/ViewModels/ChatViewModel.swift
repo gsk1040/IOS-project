@@ -5,11 +5,8 @@
 //  Created by 원대한 on 6/4/25.
 //
 
-
-// ViewModels/ChatViewModel.swift
-import Foundation
 import SwiftUI
-import Network
+import AVFoundation
 
 class ChatViewModel: ObservableObject {
     private let alanService = AlanAPIService()
@@ -17,81 +14,96 @@ class ChatViewModel: ObservableObject {
     @Published var inputText = ""
     @Published var isLoading = false
     @Published var errorMessage: String?
-    @Published var isNetworkAvailable = true
+    
+    // [추가] 현재 채팅 모드를 관리하는 상태 변수 (기본값: 대화 모드)
+    @Published var chatMode: ChatMode = .conversational
+    
+    // [수정] 음성 출력 활성화 여부는 이제 chatMode에 따라 자동으로 결정됩니다.
+    var isSpeechEnabled: Bool {
+        return chatMode == .conversational
+    }
+    @Published var speechRate: Float = 0.55 // 사용자님이 설정하신 속도
     
     private var clientId: String
-    private let networkMonitor = NWPathMonitor()
-    private let monitorQueue = DispatchQueue(label: "NetworkMonitor")
+    private let speechSynthesizer = AVSpeechSynthesizer()
     
     init(userId: String) {
-        // 사용자 ID를 클라이언트 ID로 사용
         self.clientId = "24271fa8-01a8-4ee8-be61-c9b3a660f410"
-
-        
-        // 초기 메시지 추가
-        addSystemMessage("안녕하세요! 건강검진 결과에 대해 궁금한 점이 있으시면 편하게 물어보세요.")
     }
     
-    func addSystemMessage(_ text: String) {
-        let message = ChatMessage(id: UUID().uuidString, text: text, isUser: false, timestamp: Date())
-        messages.append(message)
+    func onAppear() {
+        if messages.isEmpty {
+            addSystemMessage("안녕하세요! 건강검진 결과에 대해 궁금한 점이 있으시면 편하게 물어보세요.")
+        }
+    }
+
+    private func addSystemMessage(_ text: String) {
+        messages.append(ChatMessage(id: UUID(), text: text, isUser: false, timestamp: Date()))
     }
     
     func sendMessage() {
         guard !inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         
-        let userMessage = ChatMessage(id: UUID().uuidString, text: inputText, isUser: true, timestamp: Date())
+        let userMessage = ChatMessage(id: UUID(), text: inputText, isUser: true, timestamp: Date())
         messages.append(userMessage)
         
         let userQuestion = inputText
         inputText = ""
         
-        // 메시지 전송 중 상태로 변경
         isLoading = true
-        
+        errorMessage = nil
+
         Task {
             do {
-                let response = try await alanService.sendChat(clientId: clientId, question: userQuestion)
+                // [수정] 현재 설정된 모드(chatMode)를 API 호출 시 함께 전달합니다.
+                let response = try await alanService.sendChat(clientId: clientId, question: userQuestion, mode: self.chatMode)
                 
                 await MainActor.run {
                     self.isLoading = false
-                    let botMessage = ChatMessage(id: UUID().uuidString, text: response, isUser: false, timestamp: Date())
+                    let botMessage = ChatMessage(id: UUID(), text: response, isUser: false, timestamp: Date())
                     self.messages.append(botMessage)
-                    self.errorMessage = nil
+                    
+                    if self.isSpeechEnabled {
+                        self.speakText(response)
+                    }
                 }
             } catch {
                 await MainActor.run {
                     self.isLoading = false
-                    self.errorMessage = "메시지 전송 중 오류가 발생했습니다: \(error.localizedDescription)"
-                    self.addSystemMessage("죄송합니다. 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+                    self.errorMessage = "오류: \(error.localizedDescription)"
+                    self.addSystemMessage("죄송합니다. 답변을 받아오는 데 실패했습니다.")
                 }
             }
         }
     }
     
-    func resetChat() {
-        Task {
-            do {
-                let success = try await alanService.resetState(clientId: clientId)
-                
-                if success {
-                    await MainActor.run {
-                        self.messages = []
-                        self.addSystemMessage("안녕하세요! 건강검진 결과에 대해 궁금한 점이 있으시면 편하게 물어보세요.")
-                    }
-                }
-            } catch {
-                await MainActor.run {
-                    self.errorMessage = "대화 초기화 중 오류가 발생했습니다: \(error.localizedDescription)"
-                }
-            }
+    // [추가] 채팅 모드를 전환하는 함수
+    func toggleChatMode() {
+        if chatMode == .conversational {
+            chatMode = .search
+            stopSpeaking() // 검색 모드로 바꾸면 음성 중지
+        } else {
+            chatMode = .conversational
         }
     }
-}
+    
+    func speakText(_ text: String) {
+        stopSpeaking()
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
+        utterance.rate = self.speechRate
+        speechSynthesizer.speak(utterance)
+    }
+    
+    func stopSpeaking() {
+        if speechSynthesizer.isSpeaking {
+            speechSynthesizer.stopSpeaking(at: .immediate)
+        }
+    }
 
-struct ChatMessage: Identifiable {
-    let id: String
-    let text: String
-    let isUser: Bool
-    let timestamp: Date
+    func resetChat() {
+        stopSpeaking()
+        messages = []
+        onAppear()
+    }
 }

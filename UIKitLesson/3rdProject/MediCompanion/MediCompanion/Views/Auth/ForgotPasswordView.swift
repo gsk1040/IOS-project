@@ -23,12 +23,13 @@ struct ForgotPasswordView: View {
             VStack(spacing: 20) {
                 // 제목
                 Text("비밀번호 재설정")
-                    .font(AppTheme.Typography.Heading().font)
+                    // [오류 수정 완료] .font(AppTheme.Typography.Heading().font) -> .font(theme.typography.heading)
+                    .font(theme.typography.heading)
                     .foregroundStyle(theme.colors.textLight)
                     .padding(.top, 30)
                 
                 Text("가입하신 이메일로 비밀번호 재설정 링크를 보내드립니다.")
-                    .font(AppTheme.Typography.Body().font)
+                    .font(theme.typography.body)
                     .foregroundStyle(theme.colors.caption)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
@@ -48,7 +49,7 @@ struct ForgotPasswordView: View {
                 if let errorMessage = authViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(theme.colors.danger)
-                        .font(AppTheme.Typography.Caption().font)
+                        .font(theme.typography.caption)
                         .padding(.top, 8)
                 }
                 
@@ -61,7 +62,7 @@ struct ForgotPasswordView: View {
                             .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     } else {
                         Text("재설정 링크 전송")
-                            .font(AppTheme.Typography.Button().font)
+                            .font(theme.typography.button)
                             .foregroundColor(.white)
                     }
                 }

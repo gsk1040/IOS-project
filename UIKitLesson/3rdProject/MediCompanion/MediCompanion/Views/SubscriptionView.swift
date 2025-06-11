@@ -15,7 +15,7 @@ struct SubscriptionView: View {
     var body: some View {
         VStack(spacing: 32) {
             Text("무료 스캔을 모두 사용하셨어요")
-                .font(AppTheme.Typography.Heading().font)
+                .font(theme.typography.heading)
                 .foregroundStyle(theme.colors.primary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -42,7 +42,7 @@ struct SubscriptionView: View {
                 appState.navigateToRoot()
             }) {
                 Text("메인으로 돌아가기")
-                    .font(AppTheme.Typography.Button().font)
+                    .font(theme.typography.button)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -52,7 +52,7 @@ struct SubscriptionView: View {
             .padding(.horizontal)
             
             Text("구독은 언제든지 취소할 수 있습니다")
-                .font(AppTheme.Typography.Caption().font)
+                .font(theme.typography.caption)
                 .foregroundColor(theme.colors.caption)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -70,7 +70,7 @@ struct SubscriptionPlanView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .font(AppTheme.Typography.Button().font)
+                .font(theme.typography.button)
                 .foregroundStyle(isHighlighted ? theme.colors.primary : theme.colors.textLight)
             
             HStack(alignment: .firstTextBaseline) {
@@ -82,7 +82,7 @@ struct SubscriptionPlanView: View {
                 
                 if isHighlighted {
                     Text("추천")
-                        .font(AppTheme.Typography.Caption().font)
+                        .font(theme.typography.caption)
                         .foregroundColor(.white)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -92,7 +92,7 @@ struct SubscriptionPlanView: View {
             }
             
             Text(description)
-                .font(AppTheme.Typography.Body().font)
+                .font(theme.typography.body)
                 .foregroundStyle(theme.colors.caption)
         }
         .padding()

@@ -1,149 +1,119 @@
+//
+//  ResultView.swift
+//  MediCompanion
+//
+//  Created by 원대한 on 6/11/25.
+//
+
 import SwiftUI
 
 struct ResultView: View {
     @EnvironmentObject var appState: AppState
-    
-    // 샘플 건강 데이터 (실제 앱에서는 API 또는 이미지 분석 결과로 대체)
-    let healthData = [
-        HealthItem(title: "혈압", value: "120/80 mmHg", interpretation: "정상 범위입니다. 건강한 혈압을 유지하고 계세요!", status: .normal),
-        HealthItem(title: "공복혈당", value: "95 mg/dL", interpretation: "정상 범위입니다. 건강한 혈당 수준을 유지하고 계세요!", status: .normal),
-        HealthItem(title: "총 콜레스테롤", value: "210 mg/dL", interpretation: "경계 수준입니다. 식이 조절과 운동을 통해 관리하세요.", status: .warning),
-        HealthItem(title: "LDL 콜레스테롤", value: "140 mg/dL", interpretation: "경계 수준입니다. 식이 조절과 운동을 통해 관리하세요.", status: .warning)
-    ]
+    @State private var selectedItem: HealthItem?
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                // 상단 요약
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("검진 결과 요약")
-                        .font(AppTheme.Typography.Heading().font)
-                        .foregroundStyle(theme.colors.textLight)
-                    
-                    Text("전반적인 건강 상태는 양호하나, 콜레스테롤 수치가 경계 수준입니다. 정기적인 건강 관리와 식이 조절을 권장합니다.")
-                        .font(AppTheme.Typography.Body().font)
-                        .foregroundStyle(theme.colors.textLight)
-                        .padding()
-                        .background(theme.colors.primary.opacity(0.1))
-                        .cornerRadius(8)
-                }
-                .padding(.horizontal)
+                ResultSummaryView(healthData: appState.healthData ?? [])
                 
-                // 상세 건강 지표
-                ForEach(healthData) { item in
-                    HealthItemView(item: item)
-                }
-                
-                // 면책 조항
-                Text("* 본 정보는 참고용이며, 정확한 의학적 판단은 의사와 상담하세요.")
-                    .font(AppTheme.Typography.Caption().font)
-                    .foregroundStyle(theme.colors.caption)
-                    .padding(.horizontal)
-                    .padding(.top, 16)
-                
-                // 건강 도우미와 대화하기 버튼 (NavigationLink)
-                NavigationLink(destination: ChatView()) {
-                    HStack {
-                        Image(systemName: "bubble.left.and.bubble.right.fill")
-                            .font(.system(size: 20))
-                        Text("건강 도우미와 대화하기")
-                            .font(AppTheme.Typography.Button().font)
+                if let healthData = appState.healthData, !healthData.isEmpty {
+                    ForEach(healthData) { item in
+                        HealthItemView(item: item) {
+                            self.selectedItem = item
+                        }
                     }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(theme.colors.primary)
-                    .cornerRadius(10)
+                } else {
+                    Text("분석된 건강 데이터가 없습니다.").padding()
+                }
+                
+                Text("* 본 정보는 참고용이며, 정확한 의학적 판단은 의사와 상담하세요.")
+                    .font(.caption).foregroundColor(.secondary).padding(.horizontal)
+                
+                NavigationLink(destination: ChatView()) {
+                    Label("건강 도우미와 대화하기", systemImage: "bubble.left.and.bubble.right.fill")
+                        .font(theme.typography.button) // [오류 수정 완료]
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(theme.colors.primary)
+                        .cornerRadius(10)
                 }
                 .padding(.horizontal)
-                .padding(.top, 20)
             }
-            .padding(.vertical, 24)
+            .padding(.vertical)
         }
-        .navigationBarTitle("분석 결과", displayMode: .inline)
-        .navigationBarItems(trailing:
-            Button(action: {
-                appState.navigateToRoot()
-            }) {
-                Text("완료")
-                    .font(AppTheme.Typography.Button().font)
-                    .foregroundStyle(theme.colors.primary)
-            }
-        )
-        .background(theme.colors.backgroundLight)
+        .navigationTitle("분석 결과")
+        .navigationBarTitleDisplayMode(.inline)
+        .background(Color(UIColor.systemGroupedBackground))
+        .sheet(item: $selectedItem) { item in
+            // TODO: RecommendedVideoSummaryView를 여기에 구현해야 합니다.
+            Text("\(item.title)에 대한 추천 영상 요약 뷰").padding()
+        }
     }
 }
 
-// 건강 상태 열거형
-enum HealthStatus {
-    case normal
-    case warning
-    case danger
+struct ResultSummaryView: View {
+    let healthData: [HealthItem]
     
-    var color: Color {
-        switch self {
-        case .normal: return theme.colors.success
-        case .warning: return theme.colors.warning
-        case .danger: return theme.colors.danger
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("검진 결과 요약").font(theme.typography.heading) // [오류 수정 완료]
+            Text(generateSummary())
+                .padding()
+                .background(theme.colors.primary.opacity(0.1))
+                .cornerRadius(8)
         }
+        .padding(.horizontal)
     }
     
-    var iconName: String {
-        switch self {
-        case .normal: return "checkmark.circle.fill"
-        case .warning: return "exclamationmark.triangle.fill"
-        case .danger: return "xmark.circle.fill"
-        }
+    private func generateSummary() -> String {
+        guard !healthData.isEmpty else { return "분석할 데이터가 없습니다." }
+        let warningCount = healthData.filter { $0.status == .warning }.count
+        let dangerCount = healthData.filter { $0.status == .danger }.count
+        
+        if dangerCount > 0 { return "**주의가 필요한 항목이 \(dangerCount)개 있습니다.** 의사와 상담하세요." }
+        if warningCount > 0 { return "**일부 항목에 주의가 필요합니다.** 생활 습관 개선을 고려하세요." }
+        return "**전반적인 건강 상태가 양호합니다.** 현재의 건강 관리를 유지하세요."
     }
 }
 
-// 건강 항목 모델
-struct HealthItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let value: String
-    let interpretation: String
-    let status: HealthStatus
-}
-
-// 건강 항목 뷰
 struct HealthItemView: View {
     let item: HealthItem
+    var onRecommendationTap: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: item.status.iconName)
+                // [오류 수정 완료] item.status.iconName -> item.status.icon
+                Label(item.title, systemImage: item.status.icon)
+                    .font(theme.typography.button) // [오류 수정 완료]
                     .foregroundColor(item.status.color)
-                    .font(.system(size: 22))
-                
-                Text(item.title)
-                    .font(AppTheme.Typography.Button().font)
-                    .foregroundStyle(theme.colors.textLight)
-            }
-            
-            HStack {
-                Text("측정값:")
-                    .font(AppTheme.Typography.Body().font)
-                    .foregroundStyle(theme.colors.caption)
-                
                 Spacer()
-                
-                Text(item.value)
-                    .font(AppTheme.Typography.Body().font)
-                    .foregroundStyle(theme.colors.textLight)
-                    .fontWeight(.medium)
+                if item.status != .normal {
+                    Button(action: onRecommendationTap) {
+                        Image(systemName: "film.circle.fill")
+                            .font(.system(size: 24))
+                    }.buttonStyle(.borderless)
+                }
             }
-            
-            Text(item.interpretation)
-                .font(AppTheme.Typography.Body().font)
-                .foregroundStyle(theme.colors.textLight)
-                .padding(.top, 5)
+            HStack {
+                Text("측정값:").foregroundColor(.secondary)
+                Spacer()
+                Text(item.value).fontWeight(.medium)
+            }
+            if let range = item.referenceRange {
+                HStack {
+                    Text("참고범위:").foregroundColor(.secondary)
+                    Spacer()
+                    Text(range)
+                }
+            }
+            Text(item.interpretation).padding(.top, 5)
         }
+        .font(.subheadline)
         .padding()
-        .background(Color.white)
+        .background(.thinMaterial)
         .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
         .padding(.horizontal)
     }
 }

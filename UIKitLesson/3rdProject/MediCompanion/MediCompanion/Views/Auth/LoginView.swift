@@ -5,8 +5,6 @@
 //  Created by 원대한 on 6/4/25.
 //
 
-
-// Views/Auth/LoginView.swift
 import SwiftUI
 
 struct LoginView: View {
@@ -24,14 +22,14 @@ struct LoginView: View {
                     Image(systemName: "syringe")
                         .font(.system(size: 60))
                         .foregroundColor(theme.colors.primary)
-                        .padding()
                     
                     Text("메디스캔")
-                        .font(AppTheme.Typography.Heading().font)
+                        // [오류 수정 완료] theme.typography.Heading().font -> theme.typography.heading
+                        .font(theme.typography.heading)
                         .foregroundStyle(theme.colors.textLight)
                     
                     Text("건강검진표를 쉽게 이해하세요")
-                        .font(AppTheme.Typography.Body().font)
+                        .font(theme.typography.body)
                         .foregroundStyle(theme.colors.caption)
                 }
                 .padding(.bottom, 40)
@@ -41,7 +39,6 @@ struct LoginView: View {
                     TextField("이메일", text: $email)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
-                        .disableAutocorrection(true)
                         .padding()
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(8)
@@ -53,26 +50,20 @@ struct LoginView: View {
                 }
                 .padding(.horizontal)
                 
-                // 오류 메시지
                 if let errorMessage = authViewModel.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(theme.colors.danger)
-                        .font(AppTheme.Typography.Caption().font)
-                        .padding(.top, 8)
+                        .font(theme.typography.caption)
                 }
                 
-                // 로그인 버튼
                 Button(action: {
-                    authViewModel.signIn(email: email, password: password) { success in
-                        // 성공 시 처리는 ContentView에서 관리
-                    }
+                    authViewModel.signIn(email: email, password: password) { _ in }
                 }) {
                     if authViewModel.isLoading {
                         ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     } else {
                         Text("로그인")
-                            .font(AppTheme.Typography.Button().font)
+                            .font(theme.typography.button)
                             .foregroundColor(.white)
                     }
                 }
@@ -82,39 +73,26 @@ struct LoginView: View {
                 .cornerRadius(8)
                 .disabled(email.isEmpty || password.isEmpty || authViewModel.isLoading)
                 .padding(.horizontal)
-                .padding(.top, 10)
-                
-                // 비밀번호 찾기
-                Button("비밀번호를 잊으셨나요?") {
-                    showForgotPassword = true
-                }
-                .font(AppTheme.Typography.Caption().font)
-                .foregroundColor(theme.colors.primary)
-                .padding(.top, 8)
+
+                Button("비밀번호를 잊으셨나요?") { showForgotPassword = true }
+                    .font(theme.typography.caption)
+                    .foregroundColor(theme.colors.primary)
                 
                 Spacer()
                 
-                // 회원가입 버튼
                 HStack {
                     Text("계정이 없으신가요?")
-                        .font(AppTheme.Typography.Caption().font)
+                        .font(theme.typography.caption)
                         .foregroundColor(theme.colors.caption)
                     
-                    Button("회원가입") {
-                        showSignUp = true
-                    }
-                    .font(AppTheme.Typography.Caption().font)
-                    .foregroundColor(theme.colors.primary)
+                    Button("회원가입") { showSignUp = true }
+                        .font(theme.typography.caption)
+                        .foregroundColor(theme.colors.primary)
                 }
-                .padding(.bottom, 20)
             }
-            .padding(.vertical, 30)
-            .sheet(isPresented: $showSignUp) {
-                SignUpView()
-            }
-            .sheet(isPresented: $showForgotPassword) {
-                ForgotPasswordView()
-            }
+            .padding()
+            .sheet(isPresented: $showSignUp) { SignUpView() }
+            .sheet(isPresented: $showForgotPassword) { ForgotPasswordView() }
         }
     }
 }
