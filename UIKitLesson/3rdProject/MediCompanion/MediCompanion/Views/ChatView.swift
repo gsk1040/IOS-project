@@ -151,11 +151,12 @@ struct MessageBubble: View {
                     .cornerRadius(18)
                     .cornerRadius(18, corners: [.topLeft, .topRight, .bottomLeft])
             } else {
-                Text(message.text.attributedStringFromMarkdown()) // 변경된 부분
+                MarkdownText(message.text,
+                    foregroundColor: colorScheme == .dark ? theme.colors.textDark : theme.colors.textLight,
+                    accentColor: theme.colors.primary)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     .background(Color.gray.opacity(0.1))
-                    .foregroundColor(colorScheme == .dark ? theme.colors.textDark : theme.colors.textLight)
                     .cornerRadius(18)
                     .cornerRadius(18, corners: [.topRight, .bottomRight, .bottomLeft])
                 

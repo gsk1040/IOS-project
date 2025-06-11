@@ -51,3 +51,5 @@ class AppState: ObservableObject {
         UserSettingsManager.shared.remainingScans = remainingScans
     }
 }
+
+
