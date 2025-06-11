@@ -9,7 +9,7 @@
 // ViewModels/ChatViewModel.swift
 import Foundation
 import SwiftUI
-
+import Network
 
 class ChatViewModel: ObservableObject {
     private let alanService = AlanAPIService()
@@ -17,8 +17,11 @@ class ChatViewModel: ObservableObject {
     @Published var inputText = ""
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var isNetworkAvailable = true
     
     private var clientId: String
+    private let networkMonitor = NWPathMonitor()
+    private let monitorQueue = DispatchQueue(label: "NetworkMonitor")
     
     init(userId: String) {
         // 사용자 ID를 클라이언트 ID로 사용
