@@ -2,7 +2,7 @@
 //  CameraViewModel.swift
 //  MediCompanion
 //
-//  Created by Gemini on 6/12/25.
+//  Created by 원대한 on 6/12/25.
 //
 
 import SwiftUI
